@@ -1,5 +1,7 @@
 # fnac-img-api
 
+Install dependencies: `yarn`
+
 Start with PM2:
 
 ```bash
