@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  fnac-img-api:
+    build: .
+    ports:
+      - 5000:5000
+    volumes:
+      - ./screenshots:/home/pptruser/Downloads
