@@ -13,8 +13,10 @@ const FNAC_HEADERS = {
   "Accept-Language": "en-US,en;q=0.9",
 };
 
+const USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.0 Safari/537.36";
+
 const fetchFnacImage = async (url, i) => {
-  console.log("fnacIMG", url);
   try {
     const response = await axios.get(url, { responseType: "arraybuffer" });
     const buffer = Buffer.from(response.data, "binary");
@@ -29,10 +31,13 @@ const fetchImagesFromFnac = async (isbn) => {
   try {
     const browser = await puppeteer.launch({
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      headless: true,
     });
     const page = await browser.newPage();
 
-    console.log("page created");
+    await page.setUserAgent(USER_AGENT);
+    await page.setJavaScriptEnabled(true);
+    await page.setDefaultNavigationTimeout(0);
 
     await Promise.all([
       page.waitForNavigation(),
@@ -48,24 +53,25 @@ const fetchImagesFromFnac = async (isbn) => {
       page.click("#QuickSearchForm button"),
     ]);
 
-    console.log("moved to page");
-
-    const firstSearchResultLink = await page.$("a.Article-title");
-
-    console.log("first search result link", firstSearchResultLink);
+    const firstSearchResultLink = await page.$(".resultList a.Article-title");
 
     if (!firstSearchResultLink) {
       // We encountered the captcha or the book was not found
       return [];
     }
 
-    await firstSearchResultLink.click();
+    await Promise.all([
+      page.waitForNavigation(),
+      firstSearchResultLink.click(),
+      page.waitForNavigation(),
+    ]);
+
+    await page.waitForSelector("script.js-configuration");
 
     const dataConfig = await page.$eval(
       "script.js-configuration",
       (node) => node.innerText
     );
-    console.log("data config", dataConfig);
 
     await browser.close();
 
@@ -78,7 +84,7 @@ const fetchImagesFromFnac = async (isbn) => {
     );
     return images.filter((i) => !!i);
   } catch (e) {
-    console.log(e);
+    console.error(new Date(), e);
     return [];
   }
 };
