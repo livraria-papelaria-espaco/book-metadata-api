@@ -15,7 +15,7 @@
     "puppeteer": "10.4.0",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
-    "sharp": "^0.26.3"
+    "sharp": "^0.29.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

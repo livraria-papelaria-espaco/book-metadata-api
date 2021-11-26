@@ -23,6 +23,7 @@ const fetchFnacImage = async (url, i) => {
     const trimmedBuffer = await sharp(buffer).trim().jpeg().toBuffer();
     return trimmedBuffer;
   } catch (e) {
+    console.error(new Date(), "Failed to process image", e);
     return undefined;
   }
 };
@@ -43,8 +44,6 @@ const fetchImagesFromFnac = async (isbn) => {
       page.waitForNavigation(),
       page.goto("https://www.fnac.pt"),
     ]);
-
-    console.log(await page.content());
 
     await page.type("#Fnac_Search", isbn);
 
