@@ -45,11 +45,18 @@ const fetchImagesFromFnac = async (isbn) => {
       page.goto("https://www.fnac.pt"),
     ]);
 
-    await page.type("#Fnac_Search", isbn);
+    /*await page.type("#Fnac_Search", isbn);
 
     await Promise.all([
       page.waitForNavigation(),
       page.click("#QuickSearchForm button"),
+    ]);*/
+
+    await Promise.all([
+      page.waitForNavigation(),
+      page.goto(
+        `https://www.fnac.pt/SearchResult/ResultList.aspx?SCat=0%211&Search=${isbn}&sft=1&sa=0`
+      ),
     ]);
 
     const firstSearchResultLink = await page.$(".resultList a.Article-title");
@@ -92,6 +99,11 @@ const app = express();
 
 app.get("/cover/:isbn", async (req, res) => {
   const { isbn } = req.params;
+
+  if (!isbn.startsWith("978") || !/^\d+$/.test(isbn)) {
+    res.sendStatus(400);
+    return;
+  }
 
   const images = await fetchImagesFromFnac(isbn);
 
