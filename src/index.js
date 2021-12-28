@@ -81,6 +81,7 @@ const fetchImagesFromFnac = async (isbn) => {
     );
 
     await browser.close();
+    browser = undefined;
 
     const data = JSON.parse(dataConfig);
 
@@ -92,13 +93,14 @@ const fetchImagesFromFnac = async (isbn) => {
     return images.filter((i) => !!i);
   } catch (e) {
     console.error(new Date(), e);
+  } finally {
     try {
       if (browser) await browser.close();
     } catch (e2) {
       console.error(new Date(), "Failed to close browser instance", e2);
     }
-    return [];
   }
+  return [];
 };
 
 const app = express();
