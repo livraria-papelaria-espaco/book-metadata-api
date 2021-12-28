@@ -29,8 +29,9 @@ const fetchFnacImage = async (url, i) => {
 };
 
 const fetchImagesFromFnac = async (isbn) => {
+  let browser;
   try {
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
       headless: true,
     });
@@ -91,6 +92,11 @@ const fetchImagesFromFnac = async (isbn) => {
     return images.filter((i) => !!i);
   } catch (e) {
     console.error(new Date(), e);
+    try {
+      if (browser) await browser.close();
+    } catch (e2) {
+      console.error(new Date(), "Failed to close browser instance", e2);
+    }
     return [];
   }
 };
