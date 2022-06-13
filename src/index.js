@@ -46,6 +46,10 @@ const fetchImagesFromFnac = async (isbn) => {
       page.goto("https://www.fnac.pt"),
     ]);
 
+    // Ignore cookies
+    await page.waitForSelector(".onetrust-close-btn-handler");
+    await page.click(".onetrust-close-btn-handler");
+
     /*await page.type("#Fnac_Search", isbn);
 
     await Promise.all([
