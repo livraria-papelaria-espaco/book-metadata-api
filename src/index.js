@@ -1,20 +1,19 @@
 const sharp = require("sharp");
 const express = require("express");
 const axios = require("axios");
-const puppeteer = require("puppeteer");
+const fs = require("fs").promises;
+const puppeteer = require("puppeteer-extra");
+const { executablePath } = require("puppeteer");
 
-const FNAC_SEARCH_REGEX =
-  /<a href="(.+?)" class=".*?Article-title js-minifa-title js-Search-hashLink.*?">.+?<\/a>/;
-const FNAC_REGEX =
-  /<script type="application\/json" class="js-configuration">[^]*?({.+})[^]*?<\/script>/;
-const FNAC_HEADERS = {
-  "User-Agent":
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36",
-  "Accept-Language": "en-US,en;q=0.9",
-};
+// add stealth plugin and use defaults (all evasion techniques)
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+puppeteer.use(StealthPlugin());
 
-const USER_AGENT =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.0 Safari/537.36";
+let cookies = [];
+
+fs.readFile("cookies.json", "utf-8")
+  .then((content) => (cookies = JSON.parse(content)))
+  .catch(() => console.log("Could not load cookies from cookies.json"));
 
 const fetchFnacImage = async (url, i) => {
   try {
@@ -32,30 +31,15 @@ const fetchImagesFromFnac = async (isbn) => {
   let browser;
   try {
     browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
       headless: true,
+      executablePath: executablePath(),
     });
     const page = await browser.newPage();
 
-    await page.setUserAgent(USER_AGENT);
     await page.setJavaScriptEnabled(true);
     await page.setDefaultNavigationTimeout(0);
 
-    await Promise.all([
-      page.waitForNavigation(),
-      page.goto("https://www.fnac.pt"),
-    ]);
-
-    // Ignore cookies
-    await page.waitForSelector(".onetrust-close-btn-handler");
-    await page.click(".onetrust-close-btn-handler");
-
-    /*await page.type("#Fnac_Search", isbn);
-
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click("#QuickSearchForm button"),
-    ]);*/
+    await page.setCookie(...cookies);
 
     await Promise.all([
       page.waitForNavigation(),
@@ -77,12 +61,14 @@ const fetchImagesFromFnac = async (isbn) => {
       page.waitForNavigation(),
     ]);
 
-    await page.waitForSelector("script.js-configuration");
+    await page.waitForSelector("section.js-product-medias", { timeout: 5000 });
 
     const dataConfig = await page.$eval(
-      "script.js-configuration",
-      (node) => node.innerText
+      "section.js-product-medias",
+      (node) => node.dataset["medias"]
     );
+
+    cookies = await page.cookies();
 
     await browser.close();
     browser = undefined;
@@ -90,9 +76,7 @@ const fetchImagesFromFnac = async (isbn) => {
     const data = JSON.parse(dataConfig);
 
     const images = await Promise.all(
-      data.productData.images.map((imgSet, i) =>
-        fetchFnacImage(imgSet.zoom || imgSet.image || imgSet.thumb)
-      )
+      data.map((imgSet, i) => fetchFnacImage(imgSet.src || imgSet.thumbnailSrc))
     );
     return images.filter((i) => !!i);
   } catch (e) {
@@ -103,6 +87,7 @@ const fetchImagesFromFnac = async (isbn) => {
     } catch (e2) {
       console.error(new Date(), "Failed to close browser instance", e2);
     }
+    await fs.writeFile("cookies.json", JSON.stringify(cookies), "utf-8");
   }
   return [];
 };
