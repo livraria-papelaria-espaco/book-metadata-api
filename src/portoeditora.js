@@ -48,6 +48,7 @@ module.exports = {
       "/portoeditora/bookid-to-pe-code/:origin/:bookId",
       async (req, res) => {
         const { origin, bookId } = req.params;
+        res.header("Access-Control-Allow-Origin", "*");
 
         if (!ALLOWED_ORIGINS.includes(origin)) {
           res.sendStatus(400);
