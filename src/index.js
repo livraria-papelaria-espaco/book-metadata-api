@@ -4,6 +4,7 @@ const axios = require("axios");
 const fs = require("fs").promises;
 const { newBrowser } = require("./puppeteer");
 const portoeditora = require("./portoeditora");
+const wook = require("./wook");
 
 let cookies = [];
 
@@ -106,6 +107,7 @@ app.get("/cover/:isbn", async (req, res) => {
 });
 
 portoeditora.setupEndpoints(app);
+wook.setupEndpoints(app);
 
 app.listen(process.env.PORT || 5000);
 
