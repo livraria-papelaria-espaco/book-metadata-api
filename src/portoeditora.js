@@ -13,7 +13,6 @@ const fetchCodeFromPe = async (origin, bookId) => {
     const page = await browser.newPage();
 
     await page.setJavaScriptEnabled(true);
-    await page.setDefaultNavigationTimeout(0);
 
     await Promise.all([
       page.waitForNavigation(),

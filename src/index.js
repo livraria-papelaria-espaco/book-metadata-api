@@ -31,7 +31,6 @@ const fetchImagesFromFnac = async (isbn) => {
     const page = await browser.newPage();
 
     await page.setJavaScriptEnabled(true);
-    await page.setDefaultNavigationTimeout(0);
 
     await page.setCookie(...cookies);
 
