@@ -64,11 +64,11 @@ module.exports = {
         return;
       }
 
-      try {
-        const data = await fetchDataFromWook(isbn);
+      const data = await fetchDataFromWook(isbn);
 
+      if (data) {
         res.json(data);
-      } catch (e) {
+      } else {
         res.sendStatus(404);
       }
     });
