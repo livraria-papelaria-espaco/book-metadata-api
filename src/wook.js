@@ -7,11 +7,12 @@ const fetchDataFromWook = async (isbn) => {
     const page = await browser.newPage();
 
     await page.setJavaScriptEnabled(true);
-    await page.setDefaultNavigationTimeout(0);
     await page.setDefaultTimeout(10000);
 
     await Promise.all([
-      page.goto(`https://www.wook.pt/pesquisa?keyword=${isbn}`),
+      page.goto(`https://www.wook.pt/pesquisa?keyword=${isbn}`, {
+        waitUntil: [],
+      }),
       page.waitForSelector(".results-container"),
     ]);
 
@@ -23,14 +24,17 @@ const fetchDataFromWook = async (isbn) => {
       );
     }
 
-    const productLink = await searchResults[0].$("a.cover");
+    const productLink = await searchResults[0].$eval(
+      "a.cover",
+      (element) => element.href
+    );
 
     if (!productLink) {
       throw new Error("Can't find link of product to click on");
     }
 
     await Promise.all([
-      productLink.click(),
+      page.goto(productLink, { waitUntil: [] }),
       page.waitForSelector("script[type='application/ld+json']"),
     ]);
 
