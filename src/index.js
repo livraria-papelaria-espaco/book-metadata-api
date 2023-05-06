@@ -2,12 +2,8 @@ const sharp = require("sharp");
 const express = require("express");
 const axios = require("axios");
 const fs = require("fs").promises;
-const puppeteer = require("puppeteer-extra");
-const { executablePath } = require("puppeteer");
-
-// add stealth plugin and use defaults (all evasion techniques)
-const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-puppeteer.use(StealthPlugin());
+const { newBrowser } = require("./puppeteer");
+const portoeditora = require("./portoeditora");
 
 let cookies = [];
 
@@ -30,10 +26,7 @@ const fetchFnacImage = async (url, i) => {
 const fetchImagesFromFnac = async (isbn) => {
   let browser;
   try {
-    browser = await puppeteer.launch({
-      headless: true,
-      executablePath: executablePath(),
-    });
+    browser = await newBrowser();
     const page = await browser.newPage();
 
     await page.setJavaScriptEnabled(true);
@@ -111,6 +104,8 @@ app.get("/cover/:isbn", async (req, res) => {
     res.send(images[0]);
   }
 });
+
+portoeditora.setupEndpoints(app);
 
 app.listen(process.env.PORT || 5000);
 
