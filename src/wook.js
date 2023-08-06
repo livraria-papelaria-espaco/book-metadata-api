@@ -13,10 +13,11 @@ const fetchDataFromWook = async (isbn) => {
       page.goto(`https://www.wook.pt/pesquisa?keyword=${isbn}`, {
         waitUntil: [],
       }),
-      page.waitForSelector(".results-container"),
+      //page.waitForSelector(".results-container"),
+      page.waitForSelector("script[type='application/ld+json']"),
     ]);
 
-    const searchResults = await page.$$(".results-container .results .product");
+    /*const searchResults = await page.$$(".results-container .results .product");
 
     if (searchResults.length !== 1) {
       throw new Error(
@@ -36,7 +37,7 @@ const fetchDataFromWook = async (isbn) => {
     await Promise.all([
       page.goto(productLink, { waitUntil: [] }),
       page.waitForSelector("script[type='application/ld+json']"),
-    ]);
+    ]);*/
 
     const metadata = await page.$eval(
       "script[type='application/ld+json']",
