@@ -1,8 +1,8 @@
 {
-  "name": "fnac-img",
-  "version": "2.0.0",
+  "name": "book-metadata-api",
+  "version": "3.0.0",
   "main": "src/index.js",
-  "repository": "git@github.com:livraria-papelaria-espaco/fnac-img-api.git",
+  "repository": "git@github.com:livraria-papelaria-espaco/book-metadata-api.git",
   "author": "Diogo Correia <me@diogotc.com>",
   "license": "MIT",
   "scripts": {
