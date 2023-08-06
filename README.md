@@ -1,4 +1,8 @@
-# fnac-img-api
+# book-metadata-api
+
+Fetch book metadata from various sources and expose it as an API.
+
+## Usage
 
 Install dependencies: `yarn`
 
