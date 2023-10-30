@@ -15,6 +15,7 @@ const fetchDataFromWook = async (isbn) => {
       }),
       //page.waitForSelector(".results-container"),
       page.waitForSelector("script[type='application/ld+json']"),
+      page.waitForSelector(".title").catch(() => {}),
     ]);
 
     /*const searchResults = await page.$$(".results-container .results .product");
@@ -44,7 +45,9 @@ const fetchDataFromWook = async (isbn) => {
       (element) => element.innerText.trim()
     );
 
-    const metadataJson = JSON.parse(metadata);
+    const isSchoolbook = await page.$eval('.type.escolar', () => true).catch(() => false);
+
+    const metadataJson = { ...JSON.parse(metadata), isSchoolbook };
 
     return metadataJson;
   } catch (e) {
