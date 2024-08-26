@@ -47,7 +47,17 @@ const fetchDataFromWook = async (isbn) => {
 
     const isSchoolbook = await page.$eval('.type.escolar', () => true).catch(() => false);
 
+    // wook has started including the discounted price on the metadata json
+    const nonDiscountPrice = await page.$eval(
+      "label[for=info-coverPrice-toggle-modal] .text-red",
+      (element) => element.innerText.trim().replace("€", "").replace(",", ".")
+    ).catch(() => null);
+
     const metadataJson = { ...JSON.parse(metadata), isSchoolbook };
+
+    if (nonDiscountPrice !== null && metadataJson.offers?.price) {
+      metadataJson.offers.price = nonDiscountPrice;
+    }
 
     return metadataJson;
   } catch (e) {
