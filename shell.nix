@@ -4,7 +4,7 @@
 pkgs.mkShell {
   buildInputs = with pkgs; [
     nodejs
-    yarn
+    pnpm
   ];
   shellHook = ''
     export PUPPETEER_SKIP_DOWNLOAD=1
