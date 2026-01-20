@@ -1,6 +1,5 @@
 const sharp = require("sharp");
 const express = require("express");
-const axios = require("axios");
 const fs = require("fs").promises;
 const { newBrowser } = require("./puppeteer");
 const portoeditora = require("./portoeditora");
@@ -14,8 +13,12 @@ fs.readFile("cookies.json", "utf-8")
 
 const fetchFnacImage = async (url, i) => {
   try {
-    const response = await axios.get(url, { responseType: "arraybuffer" });
-    const buffer = Buffer.from(response.data, "binary");
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error(new Date(), `Got status code ${response.status} while fetching image`);
+      return undefined;
+    }
+    const buffer = await response.bytes();
     const trimmedBuffer = await sharp(buffer).trim().jpeg().toBuffer();
     return trimmedBuffer;
   } catch (e) {
