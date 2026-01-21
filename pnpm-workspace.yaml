@@ -5,3 +5,4 @@ packageExtensions:
     dependencies:
       node-addon-api: '*'
       node-gyp: '*'
+injectWorkspacePackages: true

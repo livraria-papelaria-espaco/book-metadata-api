@@ -3,6 +3,7 @@ lockfileVersion: '9.0'
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
+  injectWorkspacePackages: true
 
 packageExtensionsChecksum: sha256-IOKwlDnvFs/ysmudlG/nLnCQtKVgopOSeNqug4DTRpk=
 
