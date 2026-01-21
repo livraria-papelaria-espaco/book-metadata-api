@@ -1,0 +1,7 @@
+onlyBuiltDependencies:
+  - sharp
+packageExtensions:
+  sharp:
+    dependencies:
+      node-addon-api: '*'
+      node-gyp: '*'
