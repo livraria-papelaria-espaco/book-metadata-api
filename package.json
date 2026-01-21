@@ -9,6 +9,9 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
+  "files": [
+    "src/*"
+  ],
   "dependencies": {
     "express": "^5.2.1",
     "puppeteer": "24.35.0",
