@@ -6,3 +6,5 @@ packageExtensions:
       node-addon-api: '*'
       node-gyp: '*'
 injectWorkspacePackages: true
+allowBuilds:
+  puppeteer: false
