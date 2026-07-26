@@ -1,5 +1,3 @@
-onlyBuiltDependencies:
-  - sharp
 packageExtensions:
   sharp:
     dependencies:
@@ -7,4 +5,5 @@ packageExtensions:
       node-gyp: '*'
 injectWorkspacePackages: true
 allowBuilds:
+  sharp: true
   puppeteer: false
