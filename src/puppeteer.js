@@ -6,9 +6,9 @@ const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
 
 module.exports = {
-  newBrowser: () =>
+  newBrowser: async () =>
     puppeteer.launch({
       headless: "new",
-      executablePath: executablePath(),
+      executablePath: await executablePath(),
     }),
 };
