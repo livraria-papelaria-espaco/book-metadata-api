@@ -49,7 +49,7 @@ const fetchDataFromWook = async (isbn) => {
 
     // wook has started including the discounted price on the metadata json
     const nonDiscountPrice = await page.$eval(
-      "label[for=info-coverPrice-toggle-modal] .text-red",
+      ".sale-container .text-red",
       (element) => element.innerText.trim().replace("€", "").replace(",", ".")
     ).catch(() => null);
 
