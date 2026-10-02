@@ -7,6 +7,12 @@
     "group:all",
     "schedule:quarterly"
   ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "extends": [
+      "schedule:quarterly"
+    ]
+  },
   "ignorePresets": [
     ":semanticPrefixFixDepsChoreOthers"
   ]
